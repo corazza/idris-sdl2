@@ -4,10 +4,6 @@ import Effects
 import public Graphics.SDL2
 
 export
-Rdr : Type
-Rdr = Renderer
-
-export
 data Colour = MkCol Int Int Int Int
 
 export
@@ -42,7 +38,10 @@ export
 magenta : Colour
 magenta = MkCol 255 0 255 255
 
-public export
+Rdr : Type
+Rdr = Renderer
+
+export
 data Sdl : Effect where
   Initialise : Int -> Int -> Sdl () () (\v => Rdr)
   Quit : Sdl () Rdr (\v => ())
@@ -74,8 +73,7 @@ quit : { [SDL_ON] ==> [SDL ()] } Eff ()
 quit = call Quit
 
 export
--- flip : { [SDL_ON] } Eff ()
-flip : Eff () [SDL_ON]
+flip : { [SDL_ON] } Eff ()
 flip = call Flip
 
 export
