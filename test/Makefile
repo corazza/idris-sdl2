@@ -1,5 +1,7 @@
+PROGRAMS := bitmap etest events hello test
+
 .PHONY: all
-all: bitmap etest events hello test
+all: $(PROGRAMS)
 
 .PHONY: bitmap
 bitmap:
@@ -20,3 +22,7 @@ hello:
 .PHONY: test
 test:
 	idris --build test.ipkg
+
+.PHONY: clean
+clean:
+	rm -f *.ibc $(PROGRAMS)
