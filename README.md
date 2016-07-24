@@ -1,4 +1,4 @@
-SDL-idris
-=========
+idris-sdl2
+==========
 
-SDL bindings package for idris
+SDL2 bindings package for Idris.
