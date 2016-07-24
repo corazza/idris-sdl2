@@ -1,67 +1,118 @@
-module Graphics.SDL
+module Graphics.SDL2
 
 import Graphics.Config
 
-%include C "sdlrun.h"
-%include C "SDL/SDL.h"
-%link C "sdlrun.o"
-%lib C "SDL_gfx"
+%include C "sdl2.h"
+%link C    "sdl2.o"
 
 -- Set up a window
 
-abstract 
-data SDLSurface = MkSurface Ptr
+export
+data Renderer = MkRenderer Ptr
 
-public
-startSDL : Int -> Int -> IO SDLSurface
-startSDL x y = do ptr <- do_startSDL
-		  return (MkSurface ptr)
-  where do_startSDL = foreign FFI_C "startSDL" (Int -> Int -> IO Ptr) x y
+export
+data Surface = MkSurface Ptr
 
-public
-endSDL : IO ()
-endSDL = foreign FFI_C "SDL_Quit" (IO ())
+export
+data Texture = MkTexture Ptr
 
-public
-flipBuffers : SDLSurface -> IO ();
-flipBuffers (MkSurface ptr) 
-     = foreign FFI_C "flipBuffers" (Ptr -> IO ()) ptr
+export
+init : Int -> Int -> IO Renderer
+init x y = do
+  ptr <- foreign FFI_C "idris_sdl2_init" (Int -> Int -> IO Ptr) x y
+  return $ MkRenderer ptr
 
+export
+setRendererDrawColor :
+  Renderer ->
+  (r : Bits8) -> (g : Bits8) -> (b : Bits8) -> (a : Bits8) -> IO Bool
+setRendererDrawColor (MkRenderer renderer) r g b a = do
+  result <- foreign FFI_C "SDL_SetRenderDrawColor"
+            (Ptr -> Bits8 -> Bits8 -> Bits8 -> Bits8 -> IO Int)
+            renderer r g b a
+  return (result == 0)
+
+export
+getError : IO String
+getError = foreign FFI_C "SDL_GetError" (IO String)
+
+export
+quit : IO ()
+quit = foreign FFI_C "SDL_Quit" (IO ())
+
+-- XXX: Ignores last two arguments for now: srcRect and dstRect.
+export
+renderCopy : Renderer -> Texture -> IO Int
+renderCopy (MkRenderer renderer) (MkTexture texture) =
+  foreign FFI_C "SDL_RenderCopy" (Ptr -> Ptr -> Ptr -> Ptr -> IO Int)
+          renderer texture null null
+
+export
+renderClear : Renderer -> IO Int
+renderClear (MkRenderer renderer) =
+    foreign FFI_C "SDL_RenderClear" (Ptr -> IO Int) renderer
+
+export
+renderPresent : Renderer -> IO ()
+renderPresent (MkRenderer ptr)
+     = foreign FFI_C "SDL_RenderPresent" (Ptr -> IO ()) ptr
+
+export
+loadBMP : (bmpPath : String) -> IO Surface
+loadBMP bmpPath = do
+  surface <- foreign FFI_C "SDL_LoadBMP" (String -> IO Ptr) bmpPath
+  return $ MkSurface surface
+
+export
+createTextureFromSurface : Renderer -> (bitmap : Surface) -> IO Texture
+createTextureFromSurface (MkRenderer renderer) (MkSurface bmp) = do
+  texture <- foreign FFI_C "SDL_CreateTextureFromSurface" (Ptr -> Ptr -> IO Ptr) renderer bmp
+  return $ MkTexture texture
+
+export
+destroyRenderer : Renderer -> IO ()
+destroyRenderer (MkRenderer renderer) =
+  foreign FFI_C "SDL_DestroyRenderer" (Ptr -> IO ()) renderer
+
+export
+freeSurface : Surface -> IO ()
+freeSurface (MkSurface surface) =
+  foreign FFI_C "SDL_FreeSurface" (Ptr -> IO ()) surface
 
 -- Some drawing primitives
 
-public
-filledRect : SDLSurface -> Int -> Int -> Int -> Int ->
+export
+filledRect : Renderer -> Int -> Int -> Int -> Int ->
                            Int -> Int -> Int -> Int -> IO ()
-filledRect (MkSurface ptr) x y w h r g b a 
+filledRect (MkRenderer ptr) x y w h r g b a
       = foreign FFI_C "filledRect"
            (Ptr -> Int -> Int -> Int -> Int ->
             Int -> Int -> Int -> Int -> IO ()) ptr x y w h r g b a
 
-public
-filledEllipse : SDLSurface -> Int -> Int -> Int -> Int ->
+export
+filledEllipse : Renderer -> Int -> Int -> Int -> Int ->
                               Int -> Int -> Int -> Int -> IO ()
-filledEllipse (MkSurface ptr) x y rx ry r g b a 
+filledEllipse (MkRenderer ptr) x y rx ry r g b a
       = foreign FFI_C "filledEllipse"
            (Ptr -> Int -> Int -> Int -> Int ->
             Int -> Int -> Int -> Int -> IO ()) ptr x y rx ry r g b a
 
-public
-drawLine : SDLSurface -> Int -> Int -> Int -> Int ->
+export
+drawLine : Renderer -> Int -> Int -> Int -> Int ->
                          Int -> Int -> Int -> Int -> IO ()
-drawLine (MkSurface ptr) x y ex ey r g b a 
+drawLine (MkRenderer ptr) x y ex ey r g b a
       = foreign FFI_C "drawLine"
            (Ptr -> Int -> Int -> Int -> Int ->
             Int -> Int -> Int -> Int -> IO ()) ptr x y ex ey r g b a
 
 -- TODO: More keys still to add... careful to do the right mappings in
--- KEY in sdlrun.c
+-- KEY in sdl2.c
 
-public
+public export
 data Key = KeyUpArrow
          | KeyDownArrow
-	 | KeyLeftArrow
-	 | KeyRightArrow
+         | KeyLeftArrow
+         | KeyRightArrow
          | KeyEsc
          | KeySpace
          | KeyTab
@@ -84,7 +135,7 @@ data Key = KeyUpArrow
          | KeyRShift
          | KeyLCtrl
          | KeyRCtrl
-	 | KeyAny Char
+         | KeyAny Char
 
 Eq Key where
   KeyUpArrow    == KeyUpArrow     = True
@@ -120,7 +171,7 @@ Eq Key where
   (KeyAny x)    == (KeyAny y)     = x == y
   _             == _              = False
 
-public
+public export
 data Button = Left | Middle | Right | WheelUp | WheelDown
 
 Eq Button where
@@ -131,14 +182,14 @@ Eq Button where
   WheelDown == WheelDown = True
   _ == _ = False
 
-public
+public export
 data Event = KeyDown Key
            | KeyUp Key
            | MouseMotion Int Int Int Int
            | MouseButtonDown Button Int Int
            | MouseButtonUp Button Int Int
            | Resize Int Int
-	   | AppQuit
+           | AppQuit
 
 Eq Event where
   (KeyDown x) == (KeyDown y) = x == y
@@ -152,10 +203,15 @@ Eq Event where
       = b == b' && x == x' && y == y'
   _           == _           = False
 
-public
+export
 pollEvent : IO (Maybe Event)
-pollEvent 
-    = do MkRaw e <- 
+pollEvent
+    = do MkRaw e <-
             foreign FFI_C "pollEvent" (Ptr -> IO (Raw (Maybe Event))) prim__vm
          return e
 
+export
+pollEventsForQuit : IO Bool
+pollEventsForQuit = do
+  quit <- foreign FFI_C "pollEventsForQuit" (IO Int)
+  return $ quit == 1

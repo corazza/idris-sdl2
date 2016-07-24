@@ -6,7 +6,7 @@ controlled by the arrow keys -}
 
 import Effects
 
-import Effect.SDL
+import Effect.SDL2
 import Effect.State
 import Effect.StdIO
 import Effect.Random
@@ -37,7 +37,7 @@ Prog i t = Eff IO [SDL i,
 
 -- Convenient shorthand for initialised SDL
 Running : Type -> Type
-Running t = Prog SDLSurface t
+Running t = Prog SDL2.Surface t
 
 initStarfield : List (Int, Int) -> Int -> Eff m [RND] (List (Int, Int))
 initStarfield acc 0 = return acc

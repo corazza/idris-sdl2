@@ -1,0 +1,6 @@
+package hello
+
+pkgs = sdl2
+
+executable = hello
+main = hello

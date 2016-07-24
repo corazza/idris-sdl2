@@ -1,0 +1,6 @@
+package etest
+
+pkgs = sdl2, effects
+
+main = etest
+executable = etest

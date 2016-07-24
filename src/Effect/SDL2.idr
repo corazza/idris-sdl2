@@ -1,10 +1,10 @@
-module Effect.SDL
+module Effect.SDL2
 
 import Effects
-import public Graphics.SDL
+import public Graphics.SDL2
 
-Srf : Type
-Srf = SDLSurface
+Rdr : Type
+Rdr = Renderer
 
 data Colour = MkCol Int Int Int Int
 
@@ -33,26 +33,26 @@ magenta : Colour
 magenta = MkCol 255 0 255 255
 
 data Sdl : Effect where
-     Initialise : Int -> Int -> Sdl () () (\v => Srf)
-     Quit : Sdl () Srf (\v => ())
-     Flip : Sdl () Srf (\v => Srf)
+     Initialise : Int -> Int -> Sdl () () (\v => Rdr)
+     Quit : Sdl () Rdr (\v => ())
+     Flip : Sdl () Rdr (\v => Rdr)
      Poll : Sdl (Maybe Event) a (\v => a)
 
-     WithSurface : (Srf -> IO a) -> Sdl a Srf (\v => Srf)
+     WithRenderer : (Rdr -> IO a) -> Sdl a Rdr (\v => Rdr)
 
 Handler Sdl IO where
-     handle () (Initialise x y) k = do srf <- startSDL x y; k () srf
-     handle s Quit k = do endSDL; k () ()
+     handle () (Initialise x y) k = do srf <- SDL2.init x y; k () srf
+     handle s Quit k = do SDL2.quit; k () ()
 
-     handle s Flip k = do flipBuffers s; k () s
-     handle s Poll k = do x <- pollEvent; k x s
-     handle s (WithSurface f) k = do r <- f s; k r s 
+     handle r Flip k = do renderPresent r; k () r
+     handle r Poll k = do x <- pollEvent; k x r
+     handle r (WithRenderer f) k = do res <- f r; k res r
 
 SDL : Type -> EFFECT
 SDL res = MkEff res Sdl
 
 SDL_ON : EFFECT
-SDL_ON = SDL SDLSurface
+SDL_ON = SDL SDL2.Renderer
 
 initialise : Int -> Int -> { [SDL ()] ==> [SDL_ON] } Eff () 
 initialise x y = call $ Initialise x y
@@ -66,19 +66,17 @@ flip = call Flip
 poll : { [SDL_ON] } Eff (Maybe Event) 
 poll = call Poll
 
-getSurface : { [SDL_ON] } Eff SDLSurface
-getSurface = call $ WithSurface (\s => return s)
+getRenderer : { [SDL_ON] } Eff SDL2.Renderer
+getRenderer = call $ WithRenderer (\s => return s)
 
 rectangle : Colour -> Int -> Int -> Int -> Int -> { [SDL_ON] } Eff () 
 rectangle (MkCol r g b a) x y w h 
-     = call $ WithSurface (\s => filledRect s x y w h r g b a)
+     = call $ WithRenderer (\s => filledRect s x y w h r g b a)
 
 ellipse : Colour -> Int -> Int -> Int -> Int -> { [SDL_ON] } Eff () 
 ellipse (MkCol r g b a) x y rx ry 
-     = call $ WithSurface (\s => filledEllipse s x y rx ry r g b a)
+     = call $ WithRenderer (\s => filledEllipse s x y rx ry r g b a)
 
 line : Colour -> Int -> Int -> Int -> Int -> { [SDL_ON] } Eff () 
 line (MkCol r g b a) x y ex ey 
-     = call $ WithSurface (\s => drawLine s x y ex ey r g b a)
-
-
+     = call $ WithRenderer (\s => drawLine s x y ex ey r g b a)

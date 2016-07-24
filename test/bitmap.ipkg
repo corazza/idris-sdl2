@@ -1,0 +1,6 @@
+package bitmap
+
+pkgs = sdl2
+
+executable = bitmap
+main = bitmap

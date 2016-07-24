@@ -1,5 +1,7 @@
+.PHONY: install
 install:
-	idris --install sdl.ipkg
+	idris --install sdl2.ipkg
 
+.PHONY: clean
 clean:
-	idris --clean sdl.ipkg
+	idris --clean sdl2.ipkg

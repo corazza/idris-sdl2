@@ -1,0 +1,6 @@
+package test
+
+pkgs = sdl2
+
+main = test
+executable = test

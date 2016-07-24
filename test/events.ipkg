@@ -1,0 +1,6 @@
+package events
+
+pkgs = sdl2
+
+executable = events
+main = events
