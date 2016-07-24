@@ -1,6 +1,6 @@
 module Main
 
-{- Test program for SDL effect - draws a rectangle and an ellipse on a
+{- Test program for SDL2 effect - draws a rectangle and an ellipse on a
 scrolling starfield background, with the position of the ellipse
 controlled by the arrow keys -}
 
@@ -19,14 +19,14 @@ data Vars = Position -- position of ellipse
           | Frames -- count of frames so far
           | Starfield -- position of stars in the background
 
--- SDL effect is parameterised by an underyling 'surface' resource which
+-- SDL2 effect is parameterised by an underyling 'surface' resource which
 -- only exists when initialised.
 
--- The program supports SDL, carries state, and supports random number
+-- The program supports SDL2, carries state, and supports random number
 -- generation and console I/O
 
 Prog : Type -> Type -> Type
-Prog i t = Eff t [SDL i,
+Prog i t = Eff t [SDL2 i,
                   Position ::: STATE (Int, Int),
                   XMove ::: STATE Int,
                   YMove ::: STATE Int,
@@ -35,7 +35,7 @@ Prog i t = Eff t [SDL i,
                   RND,
                   STDIO]
 
--- Convenient shorthand for initialised SDL
+-- Convenient shorthand for initialised SDL2
 Running : Type -> Type
 Running t = Prog SDL2.Renderer t
 
@@ -56,12 +56,12 @@ updateStarfield xs = upd [] xs where
            else
              upd ((x, y+1) :: acc) xs
 
-drawStarfield : List (Int, Int) -> Eff () [SDL_ON]
+drawStarfield : List (Int, Int) -> Eff () [SDL2_ON]
 drawStarfield [] = return ()
 drawStarfield ((x, y) :: xs) = do line white x y x y
                                   drawStarfield xs
 
--- Main program - set up SDL, put the ellipse in a starting position,
+-- Main program - set up SDL2, put the ellipse in a starting position,
 -- set up an intiial starfield in random locations, then run an
 -- event loop.
 
@@ -133,7 +133,7 @@ emain = do initialise 640 480
           when continue eventLoop
 
 main : IO ()
-main = runInit [SDL (),
+main = runInit [SDL2 (),
                 Position := (320, 200),
                 XMove := 0,
                 YMove := 0,

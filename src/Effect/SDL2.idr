@@ -57,44 +57,44 @@ Handler Sdl IO where
   handle r (WithRenderer f) k = do res <- f r; k res r
 
 public export
-SDL : Type -> EFFECT
-SDL res = MkEff res Sdl
+SDL2 : Type -> EFFECT
+SDL2 res = MkEff res Sdl
 
 public export
-SDL_ON : EFFECT
-SDL_ON = SDL SDL2.Renderer
+SDL2_ON : EFFECT
+SDL2_ON = SDL2 SDL2.Renderer
 
 export
-initialise : Int -> Int -> { [SDL ()] ==> [SDL_ON] } Eff ()
+initialise : Int -> Int -> { [SDL2 ()] ==> [SDL2_ON] } Eff ()
 initialise x y = call $ Initialise x y
 
 export
-quit : { [SDL_ON] ==> [SDL ()] } Eff ()
+quit : { [SDL2_ON] ==> [SDL2 ()] } Eff ()
 quit = call Quit
 
 export
-flip : { [SDL_ON] } Eff ()
+flip : { [SDL2_ON] } Eff ()
 flip = call Flip
 
 export
-poll : { [SDL_ON] } Eff (Maybe Event)
+poll : { [SDL2_ON] } Eff (Maybe Event)
 poll = call Poll
 
 export
-getRenderer : { [SDL_ON] } Eff SDL2.Renderer
+getRenderer : { [SDL2_ON] } Eff SDL2.Renderer
 getRenderer = call $ WithRenderer (\s => return s)
 
 export
-rectangle : Colour -> Int -> Int -> Int -> Int -> { [SDL_ON] } Eff ()
+rectangle : Colour -> Int -> Int -> Int -> Int -> { [SDL2_ON] } Eff ()
 rectangle (MkCol r g b a) x y w h
      = call $ WithRenderer (\s => filledRect s x y w h r g b a)
 
 export
-ellipse : Colour -> Int -> Int -> Int -> Int -> { [SDL_ON] } Eff ()
+ellipse : Colour -> Int -> Int -> Int -> Int -> { [SDL2_ON] } Eff ()
 ellipse (MkCol r g b a) x y rx ry
      = call $ WithRenderer (\s => filledEllipse s x y rx ry r g b a)
 
 export
-line : Colour -> Int -> Int -> Int -> Int -> { [SDL_ON] } Eff ()
+line : Colour -> Int -> Int -> Int -> Int -> { [SDL2_ON] } Eff ()
 line (MkCol r g b a) x y ex ey
      = call $ WithRenderer (\s => drawLine s x y ex ey r g b a)
