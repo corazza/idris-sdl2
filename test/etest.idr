@@ -1,7 +1,7 @@
 module Main
 
 {- Test program for SDL effect - draws a rectangle and an ellipse on a
-scrolling starfield background, with the position of the ellipse 
+scrolling starfield background, with the position of the ellipse
 controlled by the arrow keys -}
 
 import Effects
@@ -26,28 +26,28 @@ data Vars = Position -- position of ellipse
 -- generation and console I/O
 
 Prog : Type -> Type -> Type
-Prog i t = Eff IO [SDL i, 
-                   Position ::: STATE (Int, Int), 
-                   XMove ::: STATE Int,
-                   YMove ::: STATE Int,
-                   Frames ::: STATE Integer,
-                   Starfield ::: STATE (List (Int, Int)),
-                   RND,
-                   STDIO] t
+Prog i t = Eff t [SDL i,
+                  Position ::: STATE (Int, Int),
+                  XMove ::: STATE Int,
+                  YMove ::: STATE Int,
+                  Frames ::: STATE Integer,
+                  Starfield ::: STATE (List (Int, Int)),
+                  RND,
+                  STDIO]
 
 -- Convenient shorthand for initialised SDL
 Running : Type -> Type
-Running t = Prog SDL2.Surface t
+Running t = Prog SDL2.Renderer t
 
-initStarfield : List (Int, Int) -> Int -> Eff m [RND] (List (Int, Int))
+initStarfield : List (Int, Int) -> Int -> Eff (List (Int, Int)) [RND]
 initStarfield acc 0 = return acc
 initStarfield acc n = do x <- rndInt 0 639
                          y <- rndInt 0 479
                          initStarfield ((fromInteger x, fromInteger y) :: acc) (n - 1)
 
-updateStarfield : List (Int, Int) -> Eff m [RND] (List (Int, Int))
+updateStarfield : List (Int, Int) -> Eff (List (Int, Int)) [RND]
 updateStarfield xs = upd [] xs where
-  upd : List (Int, Int) -> List (Int, Int) -> Eff m [RND] (List (Int, Int))
+  upd : List (Int, Int) -> List (Int, Int) -> Eff (List (Int, Int)) [RND]
   upd acc [] = return acc
   upd acc ((x, y) :: xs)
       = if (y > 479) then do
@@ -56,7 +56,7 @@ updateStarfield xs = upd [] xs where
            else
              upd ((x, y+1) :: acc) xs
 
-drawStarfield : List (Int, Int) -> Eff IO [SDL_ON] ()
+drawStarfield : List (Int, Int) -> Eff () [SDL_ON]
 drawStarfield [] = return ()
 drawStarfield ((x, y) :: xs) = do line white x y x y
                                   drawStarfield xs
@@ -74,7 +74,6 @@ emain = do initialise 640 480
            quit
   where process : Maybe Event -> Running Bool
         process (Just AppQuit) = return False
-
         process (Just (KeyDown KeyLeftArrow))  = do XMove :- put (-1)
                                                     return True
         process (Just (KeyUp KeyLeftArrow))    = do XMove :- put 0
@@ -94,50 +93,51 @@ emain = do initialise 640 480
         process _ = return True
 
         draw : Running ()
-        draw = do rectangle black 0 0 640 480
-                  rectangle cyan 50 50 50 50
-                  (x, y) <- Position :- get
-                  ellipse yellow x y 20 20
-                  s <- Starfield :- get
-                  drawStarfield s
-                  flip
+        draw = do
+          rectangle black 0 0 640 480
+          rectangle cyan 50 50 50 50
+          (x, y) <- Position :- get
+          ellipse yellow x y 20 20
+          s <- Starfield :- get
+          drawStarfield s
+          flip
 
         -- update the world state by moving the ellipse to a new position
         -- and scrolling the starfield. Also print the number of frames
         -- drawn so far every so often.
 
         updateWorld : Running ()
-        updateWorld
-               = do f <- Frames :- get
-                    s <- Starfield :- get
-                    s' <- updateStarfield s
-                    Starfield :- put s'
-                    Frames :- put (f + 1)
-                    when ((f `mod` 100) == 0) (putStrLn (show f))
+        updateWorld = do
+          f <- Frames :- get
+          s <- Starfield :- get
+          s' <- updateStarfield s
+          Starfield :- put s'
+          Frames :- put (f + 1)
+          when ((f `mod` 100) == 0) (putStrLn (show f))
 
-                    (x, y) <- Position :- get
-                    xm <- XMove :- get
-                    ym <- YMove :- get
-                    Position :- put (x + xm, y + ym)
+          (x, y) <- Position :- get
+          xm <- XMove :- get
+          ym <- YMove :- get
+          Position :- put (x + xm, y + ym)
 
         -- Event loop simply has to draw the current state, update the
         -- state according to how the ellipse is moving, then process
         -- any incoming events
 
         eventLoop : Running ()
-        eventLoop = do draw
-                       updateWorld
-                       e <- poll
-                       continue <- process e
-                       when continue eventLoop
+        eventLoop = do
+          draw
+          updateWorld
+          e <- poll
+          continue <- process e
+          when continue eventLoop
 
 main : IO ()
-main = run [(), Position := (320,200), 
-                XMove := 0, 
-                YMove := 0, 
+main = runInit [SDL (),
+                Position := (320, 200),
+                XMove := 0,
+                YMove := 0,
                 Frames := 0,
                 Starfield := List.Nil,
                 1234567890,
                 ()] emain
-
-
