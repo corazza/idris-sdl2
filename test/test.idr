@@ -36,7 +36,7 @@ main = (do
         eventLoop r f x y mx 1
       processEvent r f x y mx my (Just (KeyUp KeyDownArrow)) =
         eventLoop r f x y mx 0
-      processEvent r f x y mx my (Just AppQuit) = return ()
+      processEvent r f x y mx my (Just AppQuit) = pure ()
       processEvent r f x y mx my (Just (KeyDown (KeyAny k))) = do
         print k
         eventLoop r f x y mx my

@@ -9,7 +9,8 @@ bitmap:
 
 .PHONY: etest
 etest:
-	-idris --build etest.ipkg
+	@echo etest disabled due to non-termination in type checker.
+	@echo idris --build etest.ipkg
 
 .PHONY: events
 events:

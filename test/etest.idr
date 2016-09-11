@@ -32,7 +32,7 @@ Running : Type -> Type
 Running t = Prog SDL2.Renderer t
 
 initStarfield : List (Int, Int) -> Int -> Eff (List (Int, Int)) [RND]
-initStarfield acc 0 = return acc
+initStarfield acc 0 = pure acc
 initStarfield acc n = do x <- rndInt 0 639
                          y <- rndInt 0 479
                          initStarfield ((fromInteger x, fromInteger y) :: acc) (n - 1)
@@ -40,7 +40,7 @@ initStarfield acc n = do x <- rndInt 0 639
 updateStarfield : List (Int, Int) -> Eff (List (Int, Int)) [RND]
 updateStarfield xs = upd [] xs where
   upd : List (Int, Int) -> List (Int, Int) -> Eff (List (Int, Int)) [RND]
-  upd acc [] = return acc
+  upd acc [] = pure acc
   upd acc ((x, y) :: xs)
       = if (y > 479) then do
              x <- rndInt 0 639
@@ -49,7 +49,7 @@ updateStarfield xs = upd [] xs where
              upd ((x, y+1) :: acc) xs
 
 drawStarfield : List (Int, Int) -> Eff () [SDL2_ON]
-drawStarfield [] = return ()
+drawStarfield [] = pure ()
 drawStarfield ((x, y) :: xs) = do line white x y x y
                                   drawStarfield xs
 
@@ -65,24 +65,24 @@ emain = do initialise 640 480
            eventLoop
            quit
   where process : Maybe Event -> Running Bool
-        process (Just AppQuit) = return False
+        process (Just AppQuit) = pure False
         process (Just (KeyDown KeyLeftArrow))  = do 'XMove :- put (-1)
-                                                    return True
+                                                    pure True
         process (Just (KeyUp KeyLeftArrow))    = do 'XMove :- put 0
-                                                    return True
+                                                    pure True
         process (Just (KeyDown KeyRightArrow)) = do 'XMove :- put 1
-                                                    return True
+                                                    pure True
         process (Just (KeyUp KeyRightArrow))   = do 'XMove :- put 0
-                                                    return True
+                                                    pure True
         process (Just (KeyDown KeyUpArrow))    = do 'YMove :- put (-1)
-                                                    return True
+                                                    pure True
         process (Just (KeyUp KeyUpArrow))      = do 'YMove :- put 0
-                                                    return True
+                                                    pure True
         process (Just (KeyDown KeyDownArrow))  = do 'YMove :- put 1
-                                                    return True
+                                                    pure True
         process (Just (KeyUp KeyDownArrow))    = do 'YMove :- put 0
-                                                    return True
-        process _ = return True
+                                                    pure True
+        process _ = pure True
 
         draw : Running ()
         draw = do
