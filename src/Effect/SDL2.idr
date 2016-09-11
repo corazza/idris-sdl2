@@ -82,7 +82,7 @@ poll = call Poll
 
 export
 getRenderer : { [SDL2_ON] } Eff SDL2.Renderer
-getRenderer = call $ WithRenderer (\s => return s)
+getRenderer = call $ WithRenderer (\s => pure s)
 
 export
 rectangle : Colour -> Int -> Int -> Int -> Int -> { [SDL2_ON] } Eff ()

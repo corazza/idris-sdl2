@@ -205,10 +205,10 @@ Eq Event where
 
 export
 pollEvent : IO (Maybe Event)
-pollEvent
-    = do MkRaw e <-
-            foreign FFI_C "pollEvent" (Ptr -> IO (Raw (Maybe Event))) prim__vm
-         pure e
+pollEvent = do
+  vm <- getMyVM
+  MkRaw e <- foreign FFI_C "pollEvent" (Ptr -> IO (Raw (Maybe Event))) vm
+  pure e
 
 export
 pollEventsForQuit : IO Bool
