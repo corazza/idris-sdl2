@@ -20,7 +20,7 @@ export
 init : Int -> Int -> IO Renderer
 init x y = do
   ptr <- foreign FFI_C "idris_sdl2_init" (Int -> Int -> IO Ptr) x y
-  return $ MkRenderer ptr
+  pure $ MkRenderer ptr
 
 export
 setRendererDrawColor :
@@ -30,7 +30,7 @@ setRendererDrawColor (MkRenderer renderer) r g b a = do
   result <- foreign FFI_C "SDL_SetRenderDrawColor"
             (Ptr -> Bits8 -> Bits8 -> Bits8 -> Bits8 -> IO Int)
             renderer r g b a
-  return (result == 0)
+  pure (result == 0)
 
 export
 getError : IO String
@@ -61,13 +61,13 @@ export
 loadBMP : (bmpPath : String) -> IO Surface
 loadBMP bmpPath = do
   surface <- foreign FFI_C "SDL_LoadBMP" (String -> IO Ptr) bmpPath
-  return $ MkSurface surface
+  pure $ MkSurface surface
 
 export
 createTextureFromSurface : Renderer -> (bitmap : Surface) -> IO Texture
 createTextureFromSurface (MkRenderer renderer) (MkSurface bmp) = do
   texture <- foreign FFI_C "SDL_CreateTextureFromSurface" (Ptr -> Ptr -> IO Ptr) renderer bmp
-  return $ MkTexture texture
+  pure $ MkTexture texture
 
 export
 destroyRenderer : Renderer -> IO ()
@@ -208,10 +208,10 @@ pollEvent : IO (Maybe Event)
 pollEvent
     = do MkRaw e <-
             foreign FFI_C "pollEvent" (Ptr -> IO (Raw (Maybe Event))) prim__vm
-         return e
+         pure e
 
 export
 pollEventsForQuit : IO Bool
 pollEventsForQuit = do
   quit <- foreign FFI_C "pollEventsForQuit" (IO Int)
-  return $ quit == 1
+  pure $ quit == 1
