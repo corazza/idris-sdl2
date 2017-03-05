@@ -1,3 +1,30 @@
 * idris-sdl2
 
 SDL2 bindings package for Idris.
+
+*** Build requirements
+
+- sdl2
+- sdl2_gfx
+
+On Mac install these with:
+
+#+begin_src shellsession
+$ brew install sdl2 sdl2_gfx
+#+end_src
+
+** Building
+
+Build the library.
+
+#+begin_src shellsession
+$ make
+#+end_src
+
+
+Build the tests/demos.
+
+#+begin_src shellsession
+$ cd test
+$ make
+#+end_src
