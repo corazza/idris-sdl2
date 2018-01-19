@@ -1,7 +1,7 @@
 #ifndef SDL2_H__
 #define SDL2_H__
 
-#include <SDL2/SDL.h>
+#include <SDL.h>
 #include <idris_rts.h>
 
 SDL_Renderer* idris_sdl2_init(int width, int height);
