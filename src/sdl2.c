@@ -1,5 +1,5 @@
 #include "sdl2.h"
-#include <SDL2/SDL2_gfxPrimitives.h>
+#include <SDL2_gfxPrimitives.h>
 #include <stdio.h>
 
 SDL_Renderer* idris_sdl2_init(int width, int height) {
