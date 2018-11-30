@@ -7,7 +7,7 @@ modules = Graphics.SDL2
         , Graphics.Config
         , Effect.SDL2
 
-makefile = MakefileSDLC
+makefile = Makefile
 
 objs = sdl2.o
      , sdl2.h
