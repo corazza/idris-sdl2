@@ -3,7 +3,7 @@
 #include <stdio.h>
 
 SDL_Renderer* idris_sdl2_init(int width, int height) {
-  if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO |  
+  if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO |
                SDL_INIT_EVENTS | SDL_INIT_TIMER) < 0) {
     fprintf(stderr, "Unable to init SDL: %s\n", SDL_GetError());
 //return NULL;
