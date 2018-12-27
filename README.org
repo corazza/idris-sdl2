@@ -13,6 +13,12 @@ On Mac install these with:
 $ brew install sdl2 sdl2_gfx
 #+end_src
 
+On Ubuntu install these with:
+
+#+begin_src shellsession
+$ sudo apt install libsdl2-dev libsdl2-gfx-dev
+#+end_src
+
 ** Building
 
 Build the library.
