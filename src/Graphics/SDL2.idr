@@ -16,6 +16,8 @@ data Surface = MkSurface Ptr
 export
 data Texture = MkTexture Ptr
 
+-- SDLRects would be added here, but managing those is hard to justify
+
 export
 init : Int -> Int -> IO Renderer
 init x y = do
@@ -46,6 +48,61 @@ renderCopy : Renderer -> Texture -> IO Int
 renderCopy (MkRenderer renderer) (MkTexture texture) =
   foreign FFI_C "SDL_RenderCopy" (Ptr -> Ptr -> Ptr -> Ptr -> IO Int)
           renderer texture null null
+
+public export
+data SDLRect = MkSDLRect Int Int Int Int
+%name SDLRect rect
+
+export
+translate : Int -> Int -> SDLRect -> SDLRect
+translate x' y' (MkSDLRect x y w h) = MkSDLRect (x+x') (y+y') w h
+
+export
+renderCopy' : (renderer : Renderer) ->
+              (texture : Texture) ->
+              (src : Maybe SDLRect) ->
+              (dst : Maybe SDLRect) -> IO Int
+renderCopy' (MkRenderer renderer) (MkTexture texture)
+            (Just (MkSDLRect sx sy sw sh)) (Just (MkSDLRect dx dy dw dh))
+  = foreign FFI_C "GAME_drawTexture"
+            (Ptr -> Ptr ->
+             Int -> Int -> Int -> Int ->
+             Int -> Int -> Int -> Int ->
+             Int -> IO Int)
+            renderer texture sx sy sw sh dx dy dw dh 3
+
+renderCopy' (MkRenderer renderer) (MkTexture texture)
+            (Just (MkSDLRect sx sy sw sh)) Nothing
+  = foreign FFI_C "GAME_drawTexture"
+            (Ptr -> Ptr ->
+             Int -> Int -> Int -> Int ->
+             Int -> Int -> Int -> Int ->
+             Int -> IO Int)
+            renderer texture sx sy sw sh 0 0 0 0 1
+
+renderCopy' (MkRenderer renderer) (MkTexture texture)
+            Nothing (Just (MkSDLRect dx dy dw dh))
+  = foreign FFI_C "GAME_drawTexture"
+            (Ptr -> Ptr ->
+             Int -> Int -> Int -> Int ->
+             Int -> Int -> Int -> Int ->
+             Int -> IO Int)
+            renderer texture 0 0 0 0 dx dy dw dh 2
+
+renderCopy' (MkRenderer renderer) (MkTexture texture)
+            Nothing Nothing
+  = foreign FFI_C "GAME_drawTexture"
+            (Ptr -> Ptr ->
+             Int -> Int -> Int -> Int ->
+             Int -> Int -> Int -> Int ->
+             Int -> IO Int)
+            renderer texture 0 0 0 0 0 0 0 0 0
+
+-- renderCopy'' (MkRenderer renderer) (MkTexture texture)
+--             (MkSDLRect sx sy sz sw) (MkSDLRect ds dt du dv) =
+--   foreign FFI_C "GAME_drawTexture" (Ptr -> Ptr ->
+--       Int -> Int -> Int -> Int -> Int -> Int -> Int -> Int -> IO Int)
+--           renderer texture sx sy sz sw ds dt du dv
 
 export
 renderClear : Renderer -> IO Int

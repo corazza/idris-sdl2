@@ -25,4 +25,14 @@ void drawLine(SDL_Renderer *renderer,
 void* pollEvent(VM* vm); // builds an Idris value
 int pollEventsForQuit();
 
+
+// GAME
+
+// to avoid managing SDL_Rects
+int GAME_drawTexture(SDL_Renderer* renderer, SDL_Texture* texture,
+                     int dx, int dy, int dw, int dh,
+                     int sx, int sy, int sw, int sh,
+                     int provided);
+
+
 #endif
