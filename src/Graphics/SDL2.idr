@@ -165,6 +165,10 @@ drawLine (MkRenderer ptr) x y ex ey r g b a
 -- TODO: More keys still to add... careful to do the right mappings in
 -- KEY in sdl2.c
 
+export
+getTicks : IO Int
+getTicks = foreign FFI_C "SDL_GetTicks" (IO Int)
+
 public export
 data Key = KeyUpArrow
          | KeyDownArrow
