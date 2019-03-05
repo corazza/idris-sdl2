@@ -358,3 +358,11 @@ int GAME_drawTexture(SDL_Renderer* renderer, SDL_Texture* texture,
         }
 
 }
+
+void drawWholeCenter(SDL_Renderer *renderer, SDL_Texture *texture,
+                     int dx, int dy, int dw, int dh, double angle) {
+
+        SDL_Rect dst = {dx, dy, dw, dh};
+
+        SDL_RenderCopyEx(renderer, texture, NULL, &dst, angle, NULL, SDL_FLIP_NONE);
+}

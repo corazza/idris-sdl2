@@ -34,5 +34,8 @@ int GAME_drawTexture(SDL_Renderer* renderer, SDL_Texture* texture,
                      int sx, int sy, int sw, int sh,
                      int provided);
 
+void drawWholeCenter(SDL_Renderer *renderer, SDL_Texture *texture,
+                     int dx, int dy, int dw, int dh, double angle);
+
 
 #endif
