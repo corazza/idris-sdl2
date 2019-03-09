@@ -128,114 +128,114 @@ VAL RESIZE(VM* vm, int w, int h) {
 VAL KEY(VM* vm, int tag, SDL_Keycode key) {
         VAL k;
 
-        fprintf(stderr, "KEY key = %d\n", key);
+        // fprintf(stderr, "KEY key = %d\n", key);
         switch(key) {
         case SDLK_UP:
-                fprintf(stderr, "key = UP\n");
+                // fprintf(stderr, "key = UP\n");
                 idris_constructor(k, vm, 0, 0, 0);
                 break;
         case SDLK_DOWN:
-                fprintf(stderr, "key = DOWN\n");
+                // fprintf(stderr, "key = DOWN\n");
                 idris_constructor(k, vm, 1, 0, 0);
                 break;
         case SDLK_LEFT:
-                fprintf(stderr, "key = LEFT\n");
+                // fprintf(stderr, "key = LEFT\n");
                 idris_constructor(k, vm, 2, 0, 0);
                 break;
         case SDLK_RIGHT:
-                fprintf(stderr, "key = RIGHT\n");
+                // fprintf(stderr, "key = RIGHT\n");
                 idris_constructor(k, vm, 3, 0, 0);
                 break;
         case SDLK_ESCAPE:
-                fprintf(stderr, "key = ESCAPE\n");
+                // fprintf(stderr, "key = ESCAPE\n");
                 idris_constructor(k, vm, 4, 0, 0);
                 break;
         case SDLK_SPACE:
-                fprintf(stderr, "key = SPACE\n");
+                // fprintf(stderr, "key = SPACE\n");
                 idris_constructor(k, vm, 5, 0, 0);
                 break;
         case SDLK_TAB:
-                fprintf(stderr, "key = TAB\n");
+                // fprintf(stderr, "key = TAB\n");
                 idris_constructor(k, vm, 6, 0, 0);
                 break;
         case SDLK_F1:
-                fprintf(stderr, "key = F1\n");
+                // fprintf(stderr, "key = F1\n");
                 idris_constructor(k, vm, 7, 0, 0);
                 break;
         case SDLK_F2:
-                fprintf(stderr, "key = F2\n");
+                // fprintf(stderr, "key = F2\n");
                 idris_constructor(k, vm, 8, 0, 0);
                 break;
         case SDLK_F3:
-                fprintf(stderr, "key = F3\n");
+                // fprintf(stderr, "key = F3\n");
                 idris_constructor(k, vm, 9, 0, 0);
                 break;
         case SDLK_F4:
-                fprintf(stderr, "key = F4\n");
+                // fprintf(stderr, "key = F4\n");
                 idris_constructor(k, vm, 10, 0, 0);
                 break;
         case SDLK_F5:
-                fprintf(stderr, "key = F5\n");
+                // fprintf(stderr, "key = F5\n");
                 idris_constructor(k, vm, 11, 0, 0);
                 break;
         case SDLK_F6:
-                fprintf(stderr, "key = F6\n");
+                // fprintf(stderr, "key = F6\n");
                 idris_constructor(k, vm, 12, 0, 0);
                 break;
         case SDLK_F7:
-                fprintf(stderr, "key = F7\n");
+                // fprintf(stderr, "key = F7\n");
                 idris_constructor(k, vm, 13, 0, 0);
                 break;
         case SDLK_F8:
-                fprintf(stderr, "key = F8\n");
+                // fprintf(stderr, "key = F8\n");
                 idris_constructor(k, vm, 14, 0, 0);
                 break;
         case SDLK_F9:
-                fprintf(stderr, "key = F9\n");
+                // fprintf(stderr, "key = F9\n");
                 idris_constructor(k, vm, 15, 0, 0);
                 break;
         case SDLK_F10:
-                fprintf(stderr, "key = F10\n");
+                // fprintf(stderr, "key = F10\n");
                 idris_constructor(k, vm, 16, 0, 0);
                 break;
         case SDLK_F11:
-                fprintf(stderr, "key = F11\n");
+                // fprintf(stderr, "key = F11\n");
                 idris_constructor(k, vm, 17, 0, 0);
                 break;
         case SDLK_F12:
-                fprintf(stderr, "key = F12\n");
+                // fprintf(stderr, "key = F12\n");
                 idris_constructor(k, vm, 18, 0, 0);
                 break;
         case SDLK_F13:
-                fprintf(stderr, "key = F13\n");
+                // fprintf(stderr, "key = F13\n");
                 idris_constructor(k, vm, 19, 0, 0);
                 break;
         case SDLK_F14:
-                fprintf(stderr, "key = F14\n");
+                // fprintf(stderr, "key = F14\n");
                 idris_constructor(k, vm, 20, 0, 0);
                 break;
         case SDLK_F15:
-                fprintf(stderr, "key = F15\n");
+                // fprintf(stderr, "key = F15\n");
                 idris_constructor(k, vm, 21, 0, 0);
                 break;
         case SDLK_LSHIFT:
-                fprintf(stderr, "key = LSHIFT\n");
+                // fprintf(stderr, "key = LSHIFT\n");
                 idris_constructor(k, vm, 22, 0, 0);
                 break;
         case SDLK_RSHIFT:
-                fprintf(stderr, "key = RSHIFT\n");
+                // fprintf(stderr, "key = RSHIFT\n");
                 idris_constructor(k, vm, 23, 0, 0);
                 break;
         case SDLK_LCTRL:
-                fprintf(stderr, "key = LCTRL\n");
+                // fprintf(stderr, "key = LCTRL\n");
                 idris_constructor(k, vm, 24, 0, 0);
                 break;
         case SDLK_RCTRL:
-                fprintf(stderr, "key = RCTRL\n");
+                // fprintf(stderr, "key = RCTRL\n");
                 idris_constructor(k, vm, 25, 0, 0);
                 break;
         default:
-                fprintf(stderr, "key = OTHER\n");
+                // fprintf(stderr, "key = OTHER\n");
                 idris_constructor(k, vm, 26, 1, 0);
                 // safe because there's no further allocation.
                 idris_setConArg(k, 0, MKINT((intptr_t)key));
@@ -274,15 +274,15 @@ void* pollEvent(VM* vm) {
                 idris_constructor(idris_event, vm, 0, 0, 0); // Nothing
         }
         else {
-                fprintf(stderr, "event.type = %d\n", event.type);
+                // fprintf(stderr, "event.type = %d\n", event.type);
                 VAL ievent = NULL;
                 switch(event.type) {
                 case SDL_KEYDOWN:
-                        fprintf(stderr, "KEYDOWN event.key.keysym.sym = %d\n", event.key.keysym.sym);
+                        // fprintf(stderr, "KEYDOWN event.key.keysym.sym = %d\n", event.key.keysym.sym);
                         ievent = KEY(vm, 0, event.key.keysym.sym);
                         break;
                 case SDL_KEYUP:
-                        fprintf(stderr, "KEYUP   event.key.keysym.sym = %d\n", event.key.keysym.sym);
+                        // fprintf(stderr, "KEYUP   event.key.keysym.sym = %d\n", event.key.keysym.sym);
                         ievent = KEY(vm, 1, event.key.keysym.sym);
                         break;
 /*
@@ -305,7 +305,7 @@ void* pollEvent(VM* vm) {
             break;
  */
                 case SDL_QUIT:
-                        fprintf(stderr, "SDL_QUIT\n");
+                        // fprintf(stderr, "SDL_QUIT\n");
                         idris_constructor(ievent, vm, 6, 0, 0);
                         break;
                 default:
@@ -313,7 +313,7 @@ void* pollEvent(VM* vm) {
                         idris_doneAlloc(vm);
                         return idris_event;
                 }
-                fprintf(stderr, "constructing (Just ievent)\n");
+                // fprintf(stderr, "constructing (Just ievent)\n");
                 idris_constructor(idris_event, vm, 1, 1, 0);
                 idris_setConArg(idris_event, 0, ievent); // Just ievent
         }
