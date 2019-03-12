@@ -287,8 +287,6 @@ pollEvents = pollEvents' [] where
   pollEvents' : List Event -> IO (List Event)
   pollEvents' acc = do
     vm <- getMyVM
-    -- printLn "calling poll"
-    when (length acc == 1) $ printLn (length acc)
     MkRaw e <- foreign FFI_C "pollEvent" (Ptr -> IO (Raw (Maybe Event))) vm
     case e of
          Nothing => pure acc

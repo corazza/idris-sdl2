@@ -289,14 +289,14 @@ void* pollEvent(VM* vm) {
                         ievent = MOTION(vm, event.motion.x, event.motion.y,
                                         event.motion.xrel, event.motion.yrel);
                         break;
-                // case SDL_MOUSEBUTTONDOWN:
-                //         ievent = BUTTON(vm, 3, event.button.button,
-                //                         event.button.x, event.button.y);
-                //         break;
-                // case SDL_MOUSEBUTTONUP:
-                //         ievent = BUTTON(vm, 4, event.button.button,
-                //                         event.button.x, event.button.y);
-                //         break;
+                case SDL_MOUSEBUTTONDOWN:
+                        ievent = BUTTON(vm, 3, event.button.button,
+                                        event.button.x, event.button.y);
+                        break;
+                case SDL_MOUSEBUTTONUP:
+                        ievent = BUTTON(vm, 4, event.button.button,
+                                        event.button.x, event.button.y);
+                        break;
                 // case SDL_WINDOWEVENT:
                 //         if (event.window.event == SDL_WINDOWEVENT_RESIZED) {
                 //                 ievent = RESIZE(vm, event.window.data1, event.window.data2);
