@@ -365,3 +365,7 @@ void drawWholeCenter(SDL_Renderer *renderer, SDL_Texture *texture,
 
         SDL_RenderCopyEx(renderer, texture, NULL, &dst, angle, NULL, SDL_FLIP_NONE);
 }
+
+void destroyTexture(SDL_Texture *texture) {
+        SDL_DestroyTexture(texture);
+}

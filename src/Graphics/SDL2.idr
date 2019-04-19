@@ -298,3 +298,7 @@ pollEventsForQuit : IO Bool
 pollEventsForQuit = do
   quit <- foreign FFI_C "pollEventsForQuit" (IO Int)
   pure $ quit == 1
+
+export
+destroyTexture : Texture -> IO ()
+destroyTexture (MkTexture ptr) = foreign FFI_C "destroyTexture" (Ptr -> IO ()) ptr

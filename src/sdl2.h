@@ -38,4 +38,6 @@ void drawWholeCenter(SDL_Renderer *renderer, SDL_Texture *texture,
                      int dx, int dy, int dw, int dh, double angle);
 
 
+void destroyTexture(SDL_Texture *texture);
+
 #endif
