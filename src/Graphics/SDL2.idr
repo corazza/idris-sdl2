@@ -130,6 +130,14 @@ loadBMP bmpPath = do
   pure $ MkSurface surface
 
 export
+loadImage : (path : String) -> IO (Maybe Surface)
+loadImage path = do
+  surface <- foreign FFI_C "IMG_Load" (String -> IO Ptr) path
+  if surface == null
+    then pure Nothing
+    else pure $ Just (MkSurface surface)
+
+export
 createTextureFromSurface : Renderer -> (bitmap : Surface) -> IO Texture
 createTextureFromSurface (MkRenderer renderer) (MkSurface bmp) = do
   texture <- foreign FFI_C "SDL_CreateTextureFromSurface" (Ptr -> Ptr -> IO Ptr) renderer bmp
