@@ -12,6 +12,15 @@ config:
 	echo "%flag C \"`pkg-config --libs SDL2_image`\"" >> Graphics/Config.idr
 	echo "%flag C \"`pkg-config --cflags SDL2_image`\"" >> Graphics/Config.idr
 
+	# echo "%flag C \"`pkg-config --libs SDL2 --static`\"" > Graphics/Config.idr
+	# echo "%flag C \"`pkg-config --cflags SDL2`\"" >> Graphics/Config.idr
+	# echo "%flag C \"`pkg-config --libs SDL2_gfx --static`\"" >> Graphics/Config.idr
+	# echo "%flag C \"`pkg-config --cflags SDL2_gfx`\"" >> Graphics/Config.idr
+	# echo "%flag C \"`pkg-config --libs SDL2_image --static`\"" >> Graphics/Config.idr
+	# echo "%flag C \"`pkg-config --cflags SDL2_image`\"" >> Graphics/Config.idr
+	# echo "%flag C \"`pkg-config --libs libpng --static`\"" >> Graphics/Config.idr
+	# echo "%flag C \"`pkg-config --cflags libpng`\"" >> Graphics/Config.idr
+
 .PHONY: clean
 clean:
 	rm -f sdl2.o
