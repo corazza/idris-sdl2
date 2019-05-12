@@ -288,6 +288,15 @@ pollEvent = do
   MkRaw e <- foreign FFI_C "pollEvent" (Ptr -> IO (Raw (Maybe Event))) vm
   pure e
 
+reportEvent : Event -> IO ()
+reportEvent (KeyDown x) = pure ()
+reportEvent (KeyUp x) = pure ()
+reportEvent (MouseMotion x y z w) = pure ()
+reportEvent (MouseButtonDown x y z) = putStrLn $ "down: (" ++ show y ++ ", " ++ show z ++ ")"
+reportEvent (MouseButtonUp x y z) = putStrLn $ "up: (" ++ show y ++ ", " ++ show z ++ ")"
+reportEvent (Resize x y) = pure ()
+reportEvent AppQuit = pure ()
+
 -- TODO move to C
 export
 pollEvents : IO (List Event)

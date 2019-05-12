@@ -110,9 +110,11 @@ VAL BUTTON(VM* vm, int tag, int b, int x, int y) {
 
         VAL event;
         idris_constructor(event, vm, tag, 3, 0);
-        idris_setConArg(event, 0, button);
-        idris_setConArg(event, 1, MKINT((intptr_t)x));
-        idris_setConArg(event, 2, MKINT((intptr_t)y));
+        // idris_setConArg(event, 0, button);
+        idris_setConArg(event, 0, MKINT((intptr_t)x));
+        idris_setConArg(event, 1, MKINT((intptr_t)y));
+
+        // printf("BUTTON: %d %d\n", x, y);
 
         return event;
 }
@@ -296,6 +298,8 @@ void* pollEvent(VM* vm) {
                 case SDL_MOUSEBUTTONUP:
                         ievent = BUTTON(vm, 4, event.button.button,
                                         event.button.x, event.button.y);
+                                        // 0, 0);
+                        // printf("%d %d\n", event.button.x, event.button.y);
                         break;
                 // case SDL_WINDOWEVENT:
                 //         if (event.window.event == SDL_WINDOWEVENT_RESIZED) {
