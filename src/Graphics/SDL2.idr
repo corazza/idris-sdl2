@@ -58,13 +58,22 @@ translate : Int -> Int -> SDLRect -> SDLRect
 translate x' y' (MkSDLRect x y w h) = MkSDLRect (x+x') (y+y') w h
 
 export
-drawWholeCenter : (renderer : Renderer) ->
-                  (texture : Texture) ->
-                  (dst : SDLRect) ->
-                  (angle : Double) -> IO ()
+drawWholeCenter : (renderer : Renderer) -> (texture : Texture) ->
+                  (dst : SDLRect) -> (angle : Double) -> IO ()
 drawWholeCenter (MkRenderer renderer) (MkTexture texture) (MkSDLRect x y w h) angle
   = foreign FFI_C "drawWholeCenter" (Ptr -> Ptr -> Int -> Int -> Int -> Int -> Double -> IO ())
             renderer texture x y w h angle
+
+export
+drawCenter : (renderer : Renderer) -> (texture : Texture) ->
+             (src : SDLRect) -> (dst : SDLRect) ->
+             (angle : Double) -> (flip : Int) -> IO ()
+drawCenter (MkRenderer renderer) (MkTexture texture)
+           (MkSDLRect sx sy sw sh) (MkSDLRect dx dy dw dh)
+           angle flip
+  = foreign FFI_C "drawCenter"
+      (Ptr -> Ptr -> Int -> Int -> Int -> Int -> Int -> Int -> Int -> Int -> Int -> Double -> IO ())
+      renderer texture sx sy sw sh dx dy dw dh flip angle
 
 export
 renderCopy' : (renderer : Renderer) ->
