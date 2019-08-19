@@ -59,10 +59,10 @@ translate x' y' (MkSDLRect x y w h) = MkSDLRect (x+x') (y+y') w h
 
 export
 drawWholeCenter : (renderer : Renderer) -> (texture : Texture) ->
-                  (dst : SDLRect) -> (angle : Double) -> IO ()
-drawWholeCenter (MkRenderer renderer) (MkTexture texture) (MkSDLRect x y w h) angle
-  = foreign FFI_C "drawWholeCenter" (Ptr -> Ptr -> Int -> Int -> Int -> Int -> Double -> IO ())
-            renderer texture x y w h angle
+                  (dst : SDLRect) -> (angle : Double) -> (flip : Int) -> IO ()
+drawWholeCenter (MkRenderer renderer) (MkTexture texture) (MkSDLRect x y w h) angle flip
+  = foreign FFI_C "drawWholeCenter" (Ptr -> Ptr -> Int -> Int -> Int -> Int -> Int -> Double -> IO ())
+            renderer texture x y w h flip angle
 
 export
 drawCenter : (renderer : Renderer) -> (texture : Texture) ->
@@ -277,6 +277,18 @@ data Event = KeyDown Key
            | MouseButtonUp Button Int Int
            | Resize Int Int
            | AppQuit
+           | Scroll Int Int
+
+export
+Show Event where
+  show (KeyDown x) = "keydown"
+  show (KeyUp x) = "keyup"
+  show (MouseMotion x y z w) = "mousemotion " ++ show x ++ " " ++ show y
+  show (MouseButtonDown x y z) = "mbd"
+  show (MouseButtonUp x y z) = "mbu "
+  show (Resize x y) = "resize " ++ show x ++ " " ++ show y
+  show AppQuit = "AppQuit"
+  show (Scroll x y) = "scroll " ++ show x ++ " " ++ show y
 
 Eq Event where
   (KeyDown x) == (KeyDown y) = x == y
@@ -288,6 +300,8 @@ Eq Event where
       = b == b' && x == x' && y == y'
   (MouseButtonUp b x y) == (MouseButtonUp b' x' y')
       = b == b' && x == x' && y == y'
+  (Scroll x y) == (Scroll x' y')
+      = x == x' && y == y'
   _           == _           = False
 
 export
@@ -304,6 +318,7 @@ reportEvent (MouseMotion x y z w) = pure ()
 reportEvent (MouseButtonDown x y z) = putStrLn $ "down: (" ++ show y ++ ", " ++ show z ++ ")"
 reportEvent (MouseButtonUp x y z) = putStrLn $ "up: (" ++ show y ++ ", " ++ show z ++ ")"
 reportEvent (Resize x y) = pure ()
+reportEvent (Scroll x y) = pure ()
 reportEvent AppQuit = pure ()
 
 -- TODO move to C
@@ -314,9 +329,10 @@ pollEvents = pollEvents' [] where
   pollEvents' acc = do
     vm <- getMyVM
     MkRaw e <- foreign FFI_C "pollEvent" (Ptr -> IO (Raw (Maybe Event))) vm
+    -- putStrLn $ "event: " ++ show e
     case e of
-         Nothing => pure acc
-         Just event => pollEvents' (event :: acc)
+         Nothing => pure acc -- weird hack, event has to be evaluated for scroll events to work
+         Just event => pure (show event) >>= const (pollEvents' (event :: acc))
 
 
 export

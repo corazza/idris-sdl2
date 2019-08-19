@@ -35,12 +35,12 @@ int GAME_drawTexture(SDL_Renderer* renderer, SDL_Texture* texture,
                      int provided);
 
 void drawWholeCenter(SDL_Renderer *renderer, SDL_Texture *texture,
-                     int dx, int dy, int dw, int dh, double angle);
+                     int dx, int dy, int dw, int dh, int flip, double angle);
 
 void drawCenter(SDL_Renderer *renderer, SDL_Texture *texture,
                 int sx, int sy, int sw, int sh,
                 int dx, int dy, int dw, int dh,
-                int flip_, double angle);
+                int flip, double angle);
 
 
 void destroyTexture(SDL_Texture *texture);

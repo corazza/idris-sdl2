@@ -81,6 +81,14 @@ VAL MOTION(VM* vm, int x, int y, int relx, int rely) {
         return m;
 }
 
+VAL WHEEL(VM* vm, int x, int y) {
+  VAL s;
+  idris_constructor(s, vm, 7, 2, 0);
+  idris_setConArg(s, 0, MKINT((intptr_t)x));
+  idris_setConArg(s, 1, MKINT((intptr_t)y));
+  return s;
+}
+
 VAL BUTTON(VM* vm, int tag, int b, int x, int y) {
         VAL button;
 
@@ -301,6 +309,9 @@ void* pollEvent(VM* vm) {
                                         // 0, 0);
                         // printf("%d %d\n", event.button.x, event.button.y);
                         break;
+                case SDL_MOUSEWHEEL:
+                      ievent = WHEEL(vm, event.wheel.x, event.wheel.y);
+                      break;
                 // case SDL_WINDOWEVENT:
                 //         if (event.window.event == SDL_WINDOWEVENT_RESIZED) {
                 //                 ievent = RESIZE(vm, event.window.data1, event.window.data2);
@@ -362,23 +373,25 @@ int GAME_drawTexture(SDL_Renderer* renderer, SDL_Texture* texture,
 
 }
 
+SDL_RendererFlip getFlip(int flip) {
+  if (flip == 1) return SDL_FLIP_VERTICAL;
+  if (flip == 2) return SDL_FLIP_HORIZONTAL;
+  if (flip == 3) return SDL_FLIP_HORIZONTAL | SDL_FLIP_VERTICAL;
+}
+
 void drawWholeCenter(SDL_Renderer *renderer, SDL_Texture *texture,
-                     int dx, int dy, int dw, int dh, double angle) {
+                     int dx, int dy, int dw, int dh, int flip, double angle) {
         SDL_Rect dst = {dx, dy, dw, dh};
-        SDL_RenderCopyEx(renderer, texture, NULL, &dst, angle, NULL, SDL_FLIP_NONE);
+        SDL_RenderCopyEx(renderer, texture, NULL, &dst, angle, NULL, getFlip(flip));
 }
 
 void drawCenter(SDL_Renderer *renderer, SDL_Texture *texture,
                 int sx, int sy, int sw, int sh,
                 int dx, int dy, int dw, int dh,
-                int flip_, double angle) {
-        SDL_RendererFlip flip = SDL_FLIP_NONE;
-        if (flip_ == 1) flip = SDL_FLIP_VERTICAL;
-        if (flip_ == 2) flip = SDL_FLIP_HORIZONTAL;
-        if (flip_ == 3) flip = SDL_FLIP_HORIZONTAL | SDL_FLIP_VERTICAL;
+                int flip, double angle) {
         SDL_Rect src = {sx, sy, sw, sh};
         SDL_Rect dst = {dx, dy, dw, dh};
-        SDL_RenderCopyEx(renderer, texture, &src, &dst, angle, NULL, flip);
+        SDL_RenderCopyEx(renderer, texture, &src, &dst, angle, NULL, getFlip(flip));
 }
 
 void destroyTexture(SDL_Texture *texture) {
