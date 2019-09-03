@@ -1,3 +1,4 @@
+#define SDL_MAIN_HANDLED
 #ifndef SDL2_H__
 #define SDL2_H__
 
@@ -19,6 +20,9 @@ void filledEllipse(SDL_Renderer *renderer,
 void drawLine(SDL_Renderer *renderer,
               int x, int y, int ex, int ey,
               int r, int g, int b, int a);
+
+void renderText(SDL_Renderer *renderer, const char *text, int size,
+                int r, int g, int b, int a, int x, int y, int w, int h);
 
 // Events
 

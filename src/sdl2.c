@@ -1,8 +1,11 @@
 #include "sdl2.h"
 #include <SDL2_gfxPrimitives.h>
+#include <SDL_ttf.h>
 #include <stdio.h>
 
 SDL_Renderer* idris_sdl2_init(int width, int height) {
+        SDL_SetMainReady();
+
         if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO |
                      SDL_INIT_EVENTS | SDL_INIT_TIMER) < 0) {
                 fprintf(stderr, "Unable to init SDL: %s\n", SDL_GetError());
@@ -396,4 +399,19 @@ void drawCenter(SDL_Renderer *renderer, SDL_Texture *texture,
 
 void destroyTexture(SDL_Texture *texture) {
         SDL_DestroyTexture(texture);
+}
+
+void renderText(SDL_Renderer *renderer, const char *text, int size, int r, int g, int b, int a, int x, int y, int w, int h) {
+  TTF_Font* font = TTF_OpenFont("Sans.ttf", size);
+  SDL_Color color = {r, g, b};
+  SDL_Surface* surface = TTF_RenderText_Solid(font, text, color);
+  SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
+
+  SDL_Rect rect;
+  rect.x = x;
+  rect.y = y;
+  rect.w = w;
+  rect.h = h;
+
+  SDL_RenderCopy(renderer, texture, NULL, &rect);
 }

@@ -192,6 +192,18 @@ drawLine (MkRenderer ptr) x y ex ey r g b a
 -- KEY in sdl2.c
 
 export
+renderText : (renderer : Renderer) ->
+             (text : String) ->
+             (size : Int) ->
+             (color : (Int, Int, Int, Int)) ->
+             (rect : SDLRect) ->
+             IO ()
+renderText (MkRenderer ptr) text size (r, g, b, a) (MkSDLRect x y w h)
+  = foreign FFI_C "renderText"
+        (Ptr -> String -> Int -> Int -> Int -> Int -> Int ->
+         Int -> Int -> Int -> Int -> IO ()) ptr text size r g b a x y w h
+
+export
 getTicks : IO Int
 getTicks = foreign FFI_C "SDL_GetTicks" (IO Int)
 
