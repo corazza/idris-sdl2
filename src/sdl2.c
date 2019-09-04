@@ -13,6 +13,8 @@ SDL_Renderer* idris_sdl2_init(int width, int height) {
                 exit(1);
         }
 
+        TTF_Init();
+
         SDL_Window *window = SDL_CreateWindow(
                 "sdl2",
                 SDL_WINDOWPOS_CENTERED,
@@ -41,6 +43,11 @@ SDL_Renderer* idris_sdl2_init(int width, int height) {
         };
 
         return renderer;
+}
+
+void quit() {
+  TTF_Quit();
+  SDL_Quit();
 }
 
 void filledRect(SDL_Renderer* renderer,
@@ -401,11 +408,26 @@ void destroyTexture(SDL_Texture *texture) {
         SDL_DestroyTexture(texture);
 }
 
-void renderText(SDL_Renderer *renderer, const char *text, int size, int r, int g, int b, int a, int x, int y, int w, int h) {
-  TTF_Font* font = TTF_OpenFont("Sans.ttf", size);
+// void *loadFont()
+
+void renderText(SDL_Renderer *renderer, const char *text, const char *fontName, int size, int r, int g, int b, int a, int x, int y, int w, int h) {
+  printf("start rendering text with font %s\n", fontName);
+  TTF_Font *font = TTF_OpenFont(fontName, size);
+
+  if (font == NULL) {
+    printf("error opening %s: %s\n", fontName, TTF_GetError());
+    return;
+  }
+  printf("opened font\n");
+
+
   SDL_Color color = {r, g, b};
-  SDL_Surface* surface = TTF_RenderText_Solid(font, text, color);
-  SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
+  SDL_Surface *surface = TTF_RenderText_Solid(font, text, color);
+  printf("made surface\n");
+  SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, surface);
+  printf("made texture\n");
+
+  printf("rendering text: %s %d rgba(%d, %d, %d, %d) (%d %d %d %d)\n", text, size, r, g, b, a, x, y, w, h);
 
   SDL_Rect rect;
   rect.x = x;
@@ -413,5 +435,17 @@ void renderText(SDL_Renderer *renderer, const char *text, int size, int r, int g
   rect.w = w;
   rect.h = h;
 
+
   SDL_RenderCopy(renderer, texture, NULL, &rect);
+  printf("rendered\n");
+
+  destroyTexture(texture);
+  printf("destroyed texture\n");
+
+  SDL_FreeSurface(surface);
+  printf("freed surface\n");
+
+  TTF_CloseFont(font);
+  printf("closed font\n");
+
 }

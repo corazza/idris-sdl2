@@ -40,7 +40,7 @@ getError = foreign FFI_C "SDL_GetError" (IO String)
 
 export
 quit : IO ()
-quit = foreign FFI_C "SDL_Quit" (IO ())
+quit = do foreign FFI_C "quit" (IO ())
 
 -- XXX: Ignores last two arguments for now: srcRect and dstRect.
 export
@@ -52,6 +52,11 @@ renderCopy (MkRenderer renderer) (MkTexture texture) =
 public export
 data SDLRect = MkSDLRect Int Int Int Int
 %name SDLRect rect
+
+export
+Show SDLRect where
+  show (MkSDLRect x y z w)
+    = "(" ++ show x ++ ", " ++ show y ++ ", " ++ show z ++ ", " ++ show w ++ ")"
 
 export
 translate : Int -> Int -> SDLRect -> SDLRect
@@ -194,14 +199,15 @@ drawLine (MkRenderer ptr) x y ex ey r g b a
 export
 renderText : (renderer : Renderer) ->
              (text : String) ->
+             (fontName : String) ->
              (size : Int) ->
              (color : (Int, Int, Int, Int)) ->
              (rect : SDLRect) ->
              IO ()
-renderText (MkRenderer ptr) text size (r, g, b, a) (MkSDLRect x y w h)
+renderText (MkRenderer ptr) text fontName size (r, g, b, a) (MkSDLRect x y w h)
   = foreign FFI_C "renderText"
-        (Ptr -> String -> Int -> Int -> Int -> Int -> Int ->
-         Int -> Int -> Int -> Int -> IO ()) ptr text size r g b a x y w h
+        (Ptr -> String -> String -> Int -> Int -> Int -> Int -> Int ->
+         Int -> Int -> Int -> Int -> IO ()) ptr text fontName size r g b a x y w h
 
 export
 getTicks : IO Int
