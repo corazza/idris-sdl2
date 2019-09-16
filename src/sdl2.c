@@ -387,6 +387,7 @@ SDL_RendererFlip getFlip(int flip) {
   if (flip == 1) return SDL_FLIP_VERTICAL;
   if (flip == 2) return SDL_FLIP_HORIZONTAL;
   if (flip == 3) return SDL_FLIP_HORIZONTAL | SDL_FLIP_VERTICAL;
+  return SDL_FLIP_NONE;
 }
 
 void drawWholeCenter(SDL_Renderer *renderer, SDL_Texture *texture,
@@ -405,29 +406,29 @@ void drawCenter(SDL_Renderer *renderer, SDL_Texture *texture,
 }
 
 void destroyTexture(SDL_Texture *texture) {
-        SDL_DestroyTexture(texture);
+  SDL_DestroyTexture(texture);
 }
 
 // void *loadFont()
 
-void renderText(SDL_Renderer *renderer, const char *text, const char *fontName, int size, int r, int g, int b, int a, int x, int y, int w, int h) {
-  printf("start rendering text with font %s\n", fontName);
+// TODO FIX URGENT terrible, fonts reopened
+void renderText(SDL_Renderer *renderer, const char *text, const char *fontName,
+                int size, int r, int g, int b, int a, int x, int y, int w, int h) {
   TTF_Font *font = TTF_OpenFont(fontName, size);
 
   if (font == NULL) {
-    printf("error opening %s: %s\n", fontName, TTF_GetError());
+    printf("couldn't open font %s\n", fontName);
     return;
   }
-  printf("opened font\n");
-
 
   SDL_Color color = {r, g, b};
-  SDL_Surface *surface = TTF_RenderText_Solid(font, text, color);
-  printf("made surface\n");
+  SDL_Surface *surface = TTF_RenderText_Blended(font, text, color);
   SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, surface);
-  printf("made texture\n");
 
-  printf("rendering text: %s %d rgba(%d, %d, %d, %d) (%d %d %d %d)\n", text, size, r, g, b, a, x, y, w, h);
+  SDL_Rect dst;
+  dst.x = x;
+  dst.y = y;
+  SDL_QueryTexture(texture, NULL, NULL, &dst.w, &dst.h);
 
   SDL_Rect rect;
   rect.x = x;
@@ -435,17 +436,9 @@ void renderText(SDL_Renderer *renderer, const char *text, const char *fontName, 
   rect.w = w;
   rect.h = h;
 
+  SDL_RenderCopy(renderer, texture, NULL, &dst);
 
-  SDL_RenderCopy(renderer, texture, NULL, &rect);
-  printf("rendered\n");
-
-  destroyTexture(texture);
-  printf("destroyed texture\n");
-
+  SDL_DestroyTexture(texture);
   SDL_FreeSurface(surface);
-  printf("freed surface\n");
-
   TTF_CloseFont(font);
-  printf("closed font\n");
-
 }
