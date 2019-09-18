@@ -5,7 +5,14 @@ import Graphics.Config
 %include C "sdl2.h"
 %link C    "sdl2.o"
 
--- Set up a window
+export
+data AudioDeviceID = MkAudioDeviceId Ptr
+
+export
+data Wav = MkWav Ptr
+
+export
+data Music = MkMusic Ptr
 
 export
 data Renderer = MkRenderer Ptr
@@ -362,3 +369,31 @@ pollEventsForQuit = do
 export
 destroyTexture : Texture -> IO ()
 destroyTexture (MkTexture ptr) = foreign FFI_C "destroyTexture" (Ptr -> IO ()) ptr
+
+export
+loadWav : (filepath : String) -> IO Wav
+loadWav filepath
+  = foreign FFI_C "GAME_loadWav" (String -> IO Ptr) filepath >>= pure . MkWav
+
+export
+loadMusic : (filepath : String) -> IO Music
+loadMusic filepath
+= foreign FFI_C "GAME_loadMusic" (String -> IO Ptr) filepath >>= pure . MkMusic
+
+export
+freeWav : (wav : Wav) -> IO ()
+freeWav (MkWav ptr) = foreign FFI_C "Mix_FreeChunk" (Ptr -> IO ()) ptr
+
+export
+playWav : (wav : Wav) -> IO ()
+playWav (MkWav ptr) = foreign FFI_C "GAME_playWav"
+                              (Ptr -> IO ()) ptr
+
+export
+playMusic : (music : Music) -> IO ()
+playMusic (MkMusic ptr) = foreign FFI_C "GAME_playMusic"
+                              (Ptr -> IO ()) ptr
+
+export
+haltMusic : IO ()
+haltMusic = foreign FFI_C "GAME_haltMusic" (IO ())

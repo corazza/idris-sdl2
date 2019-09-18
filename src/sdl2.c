@@ -1,7 +1,70 @@
 #include "sdl2.h"
 #include <SDL2_gfxPrimitives.h>
 #include <SDL_ttf.h>
+#include <SDL_mixer.h>
 #include <stdio.h>
+
+Mix_Chunk *GAME_loadWav(const char *filepath) {
+  return Mix_LoadWAV(filepath);
+}
+
+Mix_Music *GAME_loadMusic(const char *filepath) {
+  return Mix_LoadMUS(filepath);
+}
+
+void GAME_playWav(Mix_Chunk *wav) {
+  Mix_PlayChannel(-1, wav, 0);
+}
+
+void GAME_playMusic(Mix_Music *music) {
+  Mix_PlayMusic(music, -1);
+}
+
+void GAME_haltMusic() {
+  Mix_HaltMusic();
+}
+
+// SDL_AudioDeviceID* deviceId = NULL;
+//
+// SDL_AudioDeviceID* GAME_openAudioDevice(wav_info *ptr) {
+//   deviceId = (SDL_AudioDeviceID *) malloc(sizeof(SDL_AudioDeviceID));
+//   *deviceId = SDL_OpenAudioDevice(NULL, 0, &ptr->wavSpec, NULL, 0);
+//   return deviceId;
+// }
+//
+// wav_info *GAME_loadWav(const char *filepath) {
+//   wav_info *result = (wav_info *) malloc(sizeof(wav_info));
+//   SDL_LoadWAV(filepath,
+//               &result->wavSpec,
+//               &result->wavBuffer,
+//               &result->wavLength);
+//   if (deviceId == NULL) GAME_openAudioDevice(result);
+//   return result;
+// }
+//
+// wav_info *GAME_loadWav(const char *filepath) {
+//   wav_info *result = (wav_info *) malloc(sizeof(wav_info));
+//   SDL_LoadWAV(filepath,
+//               &result->wavSpec,
+//               &result->wavBuffer,
+//               &result->wavLength);
+//   if (deviceId == NULL) GAME_openAudioDevice(result);
+//   return result;
+// }
+//
+// void GAME_freeWav(wav_info *ptr) {
+//   SDL_FreeWAV(ptr->wavBuffer);
+//   free(ptr);
+// }
+//
+// void GAME_closeAudioDevice() {
+//   SDL_CloseAudioDevice(*deviceId);
+// }
+//
+// void GAME_playWav(wav_info *ptr) {
+//   int success = SDL_QueueAudio(*deviceId, ptr->wavBuffer, ptr->wavLength);
+//   SDL_PauseAudioDevice(*deviceId, 0); // unpause
+// }
 
 SDL_Renderer* idris_sdl2_init(int width, int height) {
         SDL_SetMainReady();
@@ -42,11 +105,17 @@ SDL_Renderer* idris_sdl2_init(int width, int height) {
                 exit(1);
         };
 
+
+        if( Mix_OpenAudio(22050, MIX_DEFAULT_FORMAT, 2, 4096) == -1 ){
+            fprintf(stderr, "Mix_OpenAudio failed: %s\n", SDL_GetError());
+        }
+
         return renderer;
 }
 
 void quit() {
   TTF_Quit();
+  Mix_CloseAudio();
   SDL_Quit();
 }
 
@@ -54,6 +123,8 @@ void filledRect(SDL_Renderer* renderer,
                 int x, int y, int w, int h,
                 int r, int g, int b, int a)
 {
+  // printf("rect(%d, %d, %d, %d), rgba(%d, %d, %d, %d)\n", x, y, w, h, r, g, b, a);
+
         int rc1 = SDL_SetRenderDrawColor(renderer, r, g, b, a);
         if (rc1 != 0) {
                 fprintf(stderr, "SDL_SetRenderDrawColor failed: %s\n", SDL_GetError());

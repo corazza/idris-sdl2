@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -Wall `idris --include` `pkg-config --cflags SDL2_gfx SDL2_image SDL2_ttf` -Umain
+CFLAGS = -Wall `idris --include` `pkg-config --cflags SDL2_gfx SDL2_mixer SDL2_image SDL2_ttf` -Umain
 
 sdl2.o: config sdl2.c sdl2.h
 
@@ -13,6 +13,8 @@ config:
 	echo "%flag C \"`pkg-config --cflags SDL2_image`\"" >> Graphics/Config.idr
 	echo "%flag C \"`pkg-config --libs SDL2_ttf`\"" >> Graphics/Config.idr
 	echo "%flag C \"`pkg-config --cflags SDL2_ttf`\"" >> Graphics/Config.idr
+	echo "%flag C \"`pkg-config --libs SDL2_mixer`\"" >> Graphics/Config.idr
+	echo "%flag C \"`pkg-config --cflags SDL2_mixer`\"" >> Graphics/Config.idr
 	echo "%flag C \"-Umain\"" >> Graphics/Config.idr
 
 .PHONY: clean
