@@ -185,6 +185,14 @@ filledRect (MkRenderer ptr) x y w h r g b a
             Int -> Int -> Int -> Int -> IO ()) ptr x y w h r g b a
 
 export
+outlineRect : Renderer -> Int -> Int -> Int -> Int ->
+                           Int -> Int -> Int -> Int -> IO ()
+outlineRect (MkRenderer ptr) x y w h r g b a
+      = foreign FFI_C "outlineRect"
+           (Ptr -> Int -> Int -> Int -> Int ->
+            Int -> Int -> Int -> Int -> IO ()) ptr x y w h r g b a
+
+export
 filledEllipse : Renderer -> Int -> Int -> Int -> Int ->
                               Int -> Int -> Int -> Int -> IO ()
 filledEllipse (MkRenderer ptr) x y rx ry r g b a

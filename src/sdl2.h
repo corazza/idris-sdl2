@@ -16,6 +16,11 @@ void filledRect(SDL_Renderer *renderer,
                 int x, int y, int w, int h,
                 int r, int g, int b, int a);
 
+void outlineRect(SDL_Renderer *renderer,
+                int x, int y, int w, int h,
+                int r, int g, int b, int a);
+
+
 void filledEllipse(SDL_Renderer *renderer,
                    int x, int y, int rx, int ry,
                    int r, int g, int b, int a);

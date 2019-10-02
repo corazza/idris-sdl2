@@ -138,6 +138,23 @@ void filledRect(SDL_Renderer* renderer,
         }
 }
 
+void outlineRect(SDL_Renderer* renderer,
+                 int x, int y, int w, int h,
+                 int r, int g, int b, int a)
+{
+        int rc1 = SDL_SetRenderDrawColor(renderer, r, g, b, a);
+        if (rc1 != 0) {
+                fprintf(stderr, "SDL_SetRenderDrawColor failed: %s\n", SDL_GetError());
+                exit(1);
+        }
+        SDL_Rect rect = { x, y, w, h };
+        int rc2 = SDL_RenderDrawRect(renderer, &rect);
+        if (rc2 != 0) {
+                fprintf(stderr, "SDL_RenderDrawRect failed: %s\n", SDL_GetError());
+                exit(1);
+        }
+}
+
 void filledEllipse(SDL_Renderer* renderer,
                    int x, int y, int rx, int ry,
                    int r, int g, int b, int a)
