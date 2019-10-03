@@ -40,6 +40,12 @@ int pollEventsForQuit();
 
 // GAME
 
+void GAME_filledPolygon(SDL_Renderer* renderer, const char *vx_, const char *vy_,
+                        int n, int r, int g, int b, int a);
+
+void GAME_outlinePolygon(SDL_Renderer* renderer, const char *vx_, const char *vy_,
+                        int n, int r, int g, int b, int a);
+
 Mix_Chunk *GAME_loadWav(const char *filepath);
 Mix_Music *GAME_loadMusic(const char *filepath);
 void GAME_playWav(Mix_Chunk *wav);

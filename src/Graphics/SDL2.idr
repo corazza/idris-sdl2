@@ -193,6 +193,37 @@ outlineRect (MkRenderer ptr) x y w h r g b a
             Int -> Int -> Int -> Int -> IO ()) ptr x y w h r g b a
 
 export
+gfxFilledRect : Renderer -> Int -> Int -> Int -> Int ->
+                Int -> Int -> Int -> Int -> IO Int
+gfxFilledRect (MkRenderer ptr) x1 y1 x2 y2 r g b a
+  = foreign FFI_C "boxRGBA"
+        (Ptr -> Int -> Int -> Int -> Int ->
+         Int -> Int -> Int -> Int -> IO Int) ptr x1 y1 x2 y2 r g b a
+
+serializePoints : List Int -> String
+serializePoints [] = ""
+serializePoints [x] = show x
+serializePoints (x::xs) = show x ++ " " ++ serializePoints xs
+
+export
+filledPolygon : Renderer -> List Int -> List Int ->
+                Int -> Int -> Int -> Int -> IO ()
+filledPolygon (MkRenderer ptr) vx vy r g b a
+  = foreign FFI_C "GAME_filledPolygon"
+        (Ptr -> String -> String -> Int ->
+         Int -> Int -> Int -> Int -> IO () )
+        ptr (serializePoints vx) (serializePoints vy) (cast $ length vx) r g b a
+
+export
+outlinePolygon : Renderer -> List Int -> List Int ->
+                 Int -> Int -> Int -> Int -> IO ()
+outlinePolygon (MkRenderer ptr) vx vy r g b a
+  = foreign FFI_C "GAME_outlinePolygon"
+        (Ptr -> String -> String -> Int ->
+         Int -> Int -> Int -> Int -> IO () )
+        ptr (serializePoints vx) (serializePoints vy) (cast $ length vx) r g b a
+
+export
 filledEllipse : Renderer -> Int -> Int -> Int -> Int ->
                               Int -> Int -> Int -> Int -> IO ()
 filledEllipse (MkRenderer ptr) x y rx ry r g b a

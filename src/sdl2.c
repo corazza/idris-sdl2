@@ -155,6 +155,34 @@ void outlineRect(SDL_Renderer* renderer,
         }
 }
 
+Sint16 *getPoints(const char *s, int n) {
+  int k = 0;
+  Sint16 *res = (Sint16*) malloc(sizeof(Sint16) * n);
+  char *point = strtok(s, " ");
+  do {
+      res[k++] = (Sint16) atoi(point);
+  } while (point = strtok(NULL, " "));
+  return res;
+}
+
+void GAME_filledPolygon(SDL_Renderer* renderer, const char *vx_, const char *vy_,
+                        int n, int r, int g, int b, int a) {
+  // printf("filled alpha: %d\n", a);
+  Sint16 *vx = getPoints(vx_, n);
+  Sint16 *vy = getPoints(vy_, n);
+  filledPolygonRGBA(renderer, vx, vy, n, r, g, b, a);
+  free(vx); free(vy);
+}
+
+void GAME_outlinePolygon(SDL_Renderer* renderer, const char *vx_, const char *vy_,
+                        int n, int r, int g, int b, int a) {
+  // printf("outline alpha: %d\n", a);
+  Sint16 *vx = getPoints(vx_, n);
+  Sint16 *vy = getPoints(vy_, n);
+  polygonRGBA(renderer, vx, vy, n, r, g, b, a);
+  free(vx); free(vy);
+}
+
 void filledEllipse(SDL_Renderer* renderer,
                    int x, int y, int rx, int ry,
                    int r, int g, int b, int a)
