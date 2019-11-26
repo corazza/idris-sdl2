@@ -1,5 +1,6 @@
 CC = gcc
-CFLAGS = -Wall `idris --include` `pkg-config --cflags SDL2_gfx SDL2_mixer SDL2_image SDL2_ttf` -Umain
+CFLAGS = -Wall `idris --include` `pkg-config --cflags SDL2_gfx SDL2_mixer SDL2_image SDL2_ttf` -Umain -I/mingw64/include
+PKG_CONFIG_PATH = /mingw64/lib/pkgconfig:/mingw64/share/pkgconfig:/usr/lib/pkgconfig:/usr/share/pkgconfig:/lib/pkgconfig
 
 sdl2.o: config sdl2.c sdl2.h
 
